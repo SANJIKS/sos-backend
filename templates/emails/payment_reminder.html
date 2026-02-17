@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Завершите ваше пожертвование</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f39c12;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 5px 5px;
+        }
+        .donation-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #f39c12;
+        }
+        .button {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .warning-icon {
+            font-size: 48px;
+            color: #f39c12;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 SOS Детские деревни Кыргызстана</h1>
+        <h2>Завершите ваше пожертвование</h2>
+    </div>
+    
+    <div class="content">
+        <div class="warning-icon">⏰</div>
+        
+        <p>Уважаемый(ая) <strong>{{ donation.donor_full_name }}</strong>,</p>
+        
+        <p>Мы заметили, что вы начали оформлять пожертвование, но не завершили процесс оплаты. Ваша помощь очень важна для детей, нуждающихся в поддержке!</p>
+        
+        <div class="donation-details">
+            <h3>📄 Детали вашего пожертвования:</h3>
+            <p><strong>Код:</strong> {{ donation.donation_code }}</p>
+            <p><strong>Сумма:</strong> {{ donation.amount }} {{ donation.currency }}</p>
+            <p><strong>Тип:</strong> 
+                {% if donation.donation_type == 'one_time' %}Разовое
+                {% elif donation.donation_type == 'monthly' %}Ежемесячное
+                {% elif donation.donation_type == 'quarterly' %}Ежеквартальное  
+                {% elif donation.donation_type == 'yearly' %}Ежегодное
+                {% endif %}
+            </p>
+            {% if donation.campaign %}
+            <p><strong>Кампания:</strong> {{ donation.campaign.name }}</p>
+            {% endif %}
+            <p><strong>Создано:</strong> {{ donation.created_at|date:"d.m.Y H:i" }}</p>
+        </div>
+        
+        <p>🤗 <strong>Почему ваша помощь важна?</strong></p>
+        <p>Каждое пожертвование помогает нам:</p>
+        <ul>
+            <li>💝 Обеспечить ребенка едой на неделю</li>
+            <li>📚 Купить учебные материалы для школы</li>
+            <li>🏥 Оплатить медицинские услуги</li>
+            <li>🎨 Организовать развивающие занятия</li>
+        </ul>
+        
+        <center>
+            <a href="{{ site_url }}/donations/payment/{{ donation.uuid }}/" class="button">
+                💳 Завершить пожертвование
+            </a>
+        </center>
+        
+        <p><small>⏱️ Срок действия этой ссылки ограничен. Если вы передумали, просто проигнорируйте это письмо.</small></p>
+        
+        <p>❓ Возникли вопросы? Мы готовы помочь:</p>
+        <p>📧 Email: info@soskyrgyzstan.kg<br>
+        📞 Телефон: +996 (312) 123-456</p>
+        
+        <p>Спасибо за ваше доброе сердце!<br>
+        <strong>Команда SOS Детские деревни Кыргызстана</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>© 2025 SOS Детские деревни Кыргызстана. Все права защищены.</p>
+        <p>Этот email был отправлен на {{ donation.donor_email }}</p>
+        <p><a href="{{ site_url }}">Посетить наш сайт</a></p>
+    </div>
+</body>
+</html>

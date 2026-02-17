@@ -1,0 +1,307 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Двухфакторная аутентификация{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .two-factor-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .two-factor-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .two-factor-header h1 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    .two-factor-header p {
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .form-group input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+    
+    .form-group input[type="text"]:focus {
+        outline: none;
+        border-color: #007cba;
+        box-shadow: 0 0 0 2px rgba(0,124,186,0.2);
+    }
+    
+    .checkbox-group {
+        margin: 20px 0;
+    }
+    
+    .checkbox-group label {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        cursor: pointer;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 8px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-primary {
+        background-color: #007cba;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #005a87;
+    }
+    
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333;
+        margin-top: 10px;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+    }
+    
+    .backup-info {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 20px 0;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    
+    .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="two-factor-container">
+    <div class="two-factor-header">
+        <h1>🔐 Двухфакторная аутентификация</h1>
+        <p>Введите код подтверждения, отправленный на ваш email</p>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post" id="2fa-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="code">Код подтверждения:</label>
+            <input type="text" id="code" name="code" maxlength="6" placeholder="000000" required autocomplete="off">
+        </div>
+        
+        {% if backup_codes_count > 0 %}
+        <div class="backup-info">
+            <strong>💡 У вас есть {{ backup_codes_count }} резервных кодов</strong><br>
+            Если у вас нет доступа к email, вы можете использовать резервный код.
+        </div>
+        
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="use_backup_code" id="use_backup_code">
+                Использовать резервный код
+            </label>
+        </div>
+        {% endif %}
+        
+        <button type="submit" class="btn btn-primary" id="submit-btn">Подтвердить</button>
+    </form>
+    
+    <button type="button" class="btn btn-secondary" onclick="sendCode()">Отправить новый код</button>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <form method="post" action="{% url 'admin:logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: #666; text-decoration: none; font-size: 14px; cursor: pointer; padding: 0;">
+                🚪 Выйти из системы
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function sendCode() {
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    
+    fetch('{% url "2fa_admin_send_code" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Новый код отправлен на ваш email');
+        } else {
+            alert('Ошибка: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Ошибка при отправке кода');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Подтвердить';
+    });
+}
+
+// Автофокус на поле ввода кода
+document.getElementById('code').focus();
+
+// Ограничение ввода только цифр
+document.getElementById('code').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+// Автоматическая отправка формы при вводе 6 цифр
+document.getElementById('code').addEventListener('input', function(e) {
+    if (this.value.length === 6) {
+        submitForm();
+    }
+});
+
+// Функция отправки формы с индикацией загрузки
+function submitForm() {
+    const form = document.getElementById('2fa-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const code = document.getElementById('code').value;
+    const useBackupCode = document.getElementById('use_backup_code').checked;
+    
+    // Показываем индикатор загрузки
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Проверка...';
+    
+    // Создаем FormData
+    const formData = new FormData();
+    formData.append('code', code);
+    formData.append('use_backup_code', useBackupCode ? 'on' : '');
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    // Отправляем AJAX запрос
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => {
+        if (response.redirected) {
+            // Если есть редирект, значит успешно
+            window.location.href = response.url;
+        } else if (response.headers.get('content-type')?.includes('application/json')) {
+            // Если JSON ответ
+            return response.json().then(data => {
+                if (data.success && data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    window.location.reload();
+                }
+            });
+        } else {
+            // Если нет редиректа, обновляем страницу для показа сообщений
+            window.location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при проверке кода. Попробуйте еще раз.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Подтвердить';
+    });
+}
+
+// Обработка отправки формы
+document.getElementById('2fa-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitForm();
+});
+
+// Функция для безопасного выхода
+function logout() {
+    // Очищаем cookies и сессию
+    document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+    // Перенаправляем на страницу логина
+    window.location.replace('/admin/login/');
+}
+
+// Обработка ошибок сети
+window.addEventListener('online', function() {
+    console.log('Соединение восстановлено');
+});
+
+window.addEventListener('offline', function() {
+    alert('Потеряно соединение с интернетом. Проверьте подключение.');
+});
+</script>
+{% endblock %} 

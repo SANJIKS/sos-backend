@@ -1,0 +1,221 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Настройка двухфакторной аутентификации{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .two-factor-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .two-factor-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .two-factor-header h1 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    .two-factor-header p {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .info-box {
+        background-color: #e3f2fd;
+        border: 1px solid #2196f3;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 20px 0;
+        font-size: 14px;
+        color: #1976d2;
+    }
+    
+    .warning-box {
+        background-color: #fff3e0;
+        border: 1px solid #ff9800;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 20px 0;
+        font-size: 14px;
+        color: #f57c00;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-primary {
+        background-color: #007cba;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #005a87;
+    }
+    
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: #333;
+        margin-top: 10px;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+    }
+    
+    .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    
+    .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    
+    .steps {
+        margin: 20px 0;
+    }
+    
+    .step {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+    
+    .step-number {
+        background-color: #007cba;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .step-content {
+        flex: 1;
+    }
+    
+    .step-title {
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    
+    .step-description {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.4;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="two-factor-container">
+    <div class="two-factor-header">
+        <h1>🔐 Настройка двухфакторной аутентификации</h1>
+        <p>Для доступа к админ-панели необходимо включить двухфакторную аутентификацию</p>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="info-box">
+        <strong>ℹ️ Что такое двухфакторная аутентификация?</strong><br>
+        Это дополнительный уровень защиты, который требует ввода кода подтверждения 
+        помимо пароля при входе в систему.
+    </div>
+    
+    <div class="warning-box">
+        <strong>⚠️ Важно!</strong><br>
+        После включения 2FA вы будете получать код подтверждения на email 
+        {{ user.email }} при каждом входе в админ-панель.
+    </div>
+    
+    <div class="steps">
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">Нажмите кнопку "Включить 2FA"</div>
+                <div class="step-description">Система отправит код подтверждения на ваш email</div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">Проверьте email</div>
+                <div class="step-description">Найдите письмо с кодом подтверждения</div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">Введите код</div>
+                <div class="step-description">На следующей странице введите полученный код</div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">Настройте резервные коды</div>
+                <div class="step-description">Создайте резервные коды на случай потери доступа к email</div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Включить двухфакторную аутентификацию</button>
+    </form>
+    
+    <form method="post" action="{% url 'admin:logout' %}" style="margin-top: 10px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">
+            Выйти из системы
+        </button>
+    </form>
+</div>
+{% endblock %} 

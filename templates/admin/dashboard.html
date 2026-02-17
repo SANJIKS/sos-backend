@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}SOS Children's Villages - Дашборд{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .sos-dashboard {
+        background: linear-gradient(135deg, #E3F2FD 0%, #ffffff 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .sos-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .sos-stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-left: 4px solid #2E86AB;
+        transition: transform 0.3s ease;
+    }
+    
+    .sos-stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .sos-stat-number {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #2E86AB;
+        margin-bottom: 10px;
+    }
+    
+    .sos-stat-label {
+        color: #666;
+        font-size: 1.1em;
+    }
+    
+    .sos-activity-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .sos-activity-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+    
+    .sos-activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .sos-activity-icon {
+        font-size: 1.5em;
+        margin-right: 15px;
+        color: #2E86AB;
+    }
+    
+    .sos-welcome {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 30px;
+        background: linear-gradient(135deg, #2E86AB 0%, #1E5F8B 100%);
+        color: white;
+        border-radius: 12px;
+    }
+    
+    .sos-welcome h1 {
+        margin: 0;
+        font-size: 2.5em;
+    }
+    
+    .sos-welcome p {
+        margin: 10px 0 0 0;
+        font-size: 1.2em;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sos-dashboard">
+    <div class="sos-welcome">
+        <h1>🏠 Добро пожаловать в SOS Children's Villages</h1>
+        <p>Админка для управления контентом и данными организации</p>
+    </div>
+    
+    <div class="sos-stats-grid">
+        <div class="sos-stat-card">
+            <div class="sos-stat-number">{{ stats.total_users }}</div>
+            <div class="sos-stat-label">👥 Пользователей</div>
+        </div>
+        
+        <div class="sos-stat-card">
+            <div class="sos-stat-number">{{ stats.active_programs }}</div>
+            <div class="sos-stat-label">🎓 Активных программ</div>
+        </div>
+        
+        <div class="sos-stat-card">
+            <div class="sos-stat-number">{{ stats.recent_news }}</div>
+            <div class="sos-stat-label">📰 Новостей за месяц</div>
+        </div>
+        
+        <div class="sos-stat-card">
+            <div class="sos-stat-number">{{ stats.pending_contacts }}</div>
+            <div class="sos-stat-label">📞 Ожидающих обращений</div>
+        </div>
+        
+        <div class="sos-stat-card">
+            <div class="sos-stat-number">{{ stats.total_donations }}</div>
+            <div class="sos-stat-label">💰 Пожертвований</div>
+        </div>
+    </div>
+    
+    <div class="sos-activity-section">
+        <h2>📞 Последние обращения</h2>
+        {% for contact in recent_activities.new_contacts %}
+        <div class="sos-activity-item">
+            <div class="sos-activity-icon">📧</div>
+            <div>
+                <strong>{{ contact.full_name }}</strong> - {{ contact.subject }}
+                <br>
+                <small style="color: #666;">{{ contact.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: #666; padding: 20px;">Нет новых обращений</p>
+        {% endfor %}
+    </div>
+    
+    <div class="sos-activity-section">
+        <h2>🎓 Новые программы</h2>
+        {% for program in recent_activities.recent_programs %}
+        <div class="sos-activity-item">
+            <div class="sos-activity-icon">🎓</div>
+            <div>
+                <strong>{{ program.title }}</strong>
+                <br>
+                <small style="color: #666;">{{ program.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: #666; padding: 20px;">Нет новых программ</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

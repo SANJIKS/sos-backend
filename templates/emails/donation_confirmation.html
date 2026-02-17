@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спасибо за пожертвование!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 5px 5px;
+        }
+        .donation-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        .button {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .success-icon {
+            font-size: 48px;
+            color: #27ae60;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 SOS Детские деревни Кыргызстана</h1>
+        <h2>Спасибо за ваше пожертвование!</h2>
+    </div>
+    
+    <div class="content">
+        <div class="success-icon">✅</div>
+        
+        <p>Уважаемый(ая) <strong>{{ donation.donor_full_name }}</strong>,</p>
+        
+        <p>Мы искренне благодарим вас за ваше пожертвование! Ваша поддержка помогает нам заботиться о детях, оставшихся без попечения родителей.</p>
+        
+        <div class="donation-details">
+            <h3>📄 Детали пожертвования:</h3>
+            <p><strong>Код пожертвования:</strong> {{ donation.donation_code }}</p>
+            <p><strong>Сумма:</strong> {{ donation.amount }} {{ donation.currency }}</p>
+            <p><strong>Тип:</strong> 
+                {% if donation.donation_type == 'one_time' %}Разовое
+                {% elif donation.donation_type == 'monthly' %}Ежемесячное
+                {% elif donation.donation_type == 'quarterly' %}Ежеквартальное  
+                {% elif donation.donation_type == 'yearly' %}Ежегодное
+                {% endif %}
+            </p>
+            {% if donation.campaign %}
+            <p><strong>Кампания:</strong> {{ donation.campaign.name }}</p>
+            {% endif %}
+            <p><strong>Дата:</strong> {{ donation.created_at|date:"d.m.Y H:i" }}</p>
+            {% if transaction %}
+            <p><strong>Статус платежа:</strong> 
+                {% if transaction.status == 'success' %}✅ Успешно
+                {% elif transaction.status == 'pending' %}⏳ В обработке
+                {% elif transaction.status == 'failed' %}❌ Неудачно
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+        
+        {% if donation.is_recurring %}
+        <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107;">
+            <h4>🔄 Рекуррентное пожертвование</h4>
+            <p>Вы настроили регулярные пожертвования. Следующий платеж будет списан {{ donation.next_payment_date|date:"d.m.Y" }}.</p>
+            <p>Вы можете отменить подписку в любое время в своем личном кабинете.</p>
+        </div>
+        {% endif %}
+        
+        <p>💝 <strong>Ваша помощь изменяет жизни детей!</strong> Благодаря таким людям как вы, мы можем:</p>
+        <ul>
+            <li>Обеспечивать детей безопасным домом и заботой</li>
+            <li>Предоставлять качественное образование и медицинскую помощь</li>
+            <li>Готовить молодых людей к самостоятельной жизни</li>
+            <li>Поддерживать семьи в кризисных ситуациях</li>
+        </ul>
+        
+        <center>
+            <a href="{{ site_url }}/donations/my-donations/" class="button">
+                📊 Посмотреть мои пожертвования
+            </a>
+        </center>
+        
+        <p>Если у вас есть вопросы, не стесняйтесь обращаться к нам:</p>
+        <p>📧 Email: info@soskyrgyzstan.kg<br>
+        📞 Телефон: +996 (312) 123-456</p>
+        
+        <p>С уважением,<br>
+        <strong>Команда SOS Детские деревни Кыргызстана</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>© 2025 SOS Детские деревни Кыргызстана. Все права защищены.</p>
+        <p>Этот email был отправлен на {{ donation.donor_email }}</p>
+        <p><a href="{{ site_url }}">Посетить наш сайт</a></p>
+    </div>
+</body>
+</html>
