@@ -85,10 +85,9 @@ class NewsListSerializer(serializers.ModelSerializer, BuildFullUrlToImage, Local
 
 
 class NewsDetailSerializer(serializers.ModelSerializer, BuildFullUrlToImage, LocalizedSerializerMixin):
-    """Сериализатор для детальной информации о новости"""
-    title = LocalizedCharField(field_name='title')
-    content = LocalizedTextField(field_name='content')
-    excerpt = LocalizedTextField(field_name='excerpt')
+    title = serializers.SerializerMethodField()
+    content = serializers.SerializerMethodField()
+    excerpt = serializers.SerializerMethodField()
     category = NewsCategorySerializer(read_only=True)
     tags = NewsTagSerializer(many=True, read_only=True)
     author_name = serializers.CharField(source='author.get_full_name', read_only=True)
@@ -109,8 +108,16 @@ class NewsDetailSerializer(serializers.ModelSerializer, BuildFullUrlToImage, Loc
             'reading_time', 'related_news', 'created_at', 'updated_at'
         ]
     
+    def get_title(self, obj):
+        return self.get_localized_field(obj, 'title')
+
+    def get_content(self, obj):
+        return self.get_localized_field(obj, 'content')
+
+    def get_excerpt(self, obj):
+        return self.get_localized_field(obj, 'excerpt')
+    
     def get_reading_time(self, obj):
-        """Примерное время чтения"""
         content = self.get_localized_field(obj, 'content')
         if content:
             word_count = len(content.split())
@@ -118,7 +125,6 @@ class NewsDetailSerializer(serializers.ModelSerializer, BuildFullUrlToImage, Loc
         return 1
     
     def get_related_news(self, obj):
-        """Похожие новости"""
         related = News.objects.filter(
             status=News.Status.PUBLISHED,
             category=obj.category
