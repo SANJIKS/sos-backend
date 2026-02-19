@@ -110,8 +110,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.users.middleware.TwoFactorSessionMiddleware',
-    'apps.users.middleware.TwoFactorAdminMiddleware',
+    # 'apps.users.middleware.TwoFactorSessionMiddleware',
+    # 'apps.users.middleware.TwoFactorAdminMiddleware',
 ]
 
 
