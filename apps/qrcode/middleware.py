@@ -48,6 +48,21 @@ class SecurityMiddleware(MiddlewareMixin):
             '/swagger/',
             '/ckeditor5/',
             '/admin/',
+            '/api/v1/auth/',
+            '/api/v1/vacancies/',
+            '/api/v1/news/',
+            '/api/v1/faq/',
+            '/api/v1/success-stories/',
+            '/api/v1/programs/',
+            '/api/v1/locations/',
+            '/api/v1/social-networks/',
+            '/api/v1/contacts/',
+            '/api/v1/partners/',
+            '/api/v1/timeline/',
+            '/api/v1/principles/',
+            '/api/v1/impact-results/',
+            '/api/v1/donation-options/',
+            '/api/v1/common/',
         ]
         
         if any(request.path.startswith(path) for path in exempt_paths):
