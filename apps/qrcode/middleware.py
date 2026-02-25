@@ -63,6 +63,8 @@ class SecurityMiddleware(MiddlewareMixin):
             '/api/v1/impact-results/',
             '/api/v1/donation-options/',
             '/api/v1/common/',
+            '/api/v1/qrcode/',
+            '/api/v1/banking-requisites/'
         ]
         
         if any(request.path.startswith(path) for path in exempt_paths):
