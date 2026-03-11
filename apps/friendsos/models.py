@@ -20,8 +20,8 @@ class SOSFriend(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Обновлено'))
 
     class Meta:
-        verbose_name = _('Друг SOS')
-        verbose_name_plural = _('Друзья SOS')
+        verbose_name = _('История друга')
+        verbose_name_plural = _('Истории наших друзей')
         ordering = ['sort_order', '-created_at']
 
     def __str__(self):
