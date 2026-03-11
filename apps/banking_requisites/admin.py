@@ -212,16 +212,17 @@ class BankingRequisiteAdmin(ModelAdmin):
     
     @display(description=_('Статус'), ordering='is_active')
     def is_active_badge(self, obj):
-        """Отображение статуса активности с анимацией"""
         if obj.is_active:
             return format_html(
                 '<span class="badge bg-success text-white px-2 py-1 rounded-pill" '
                 'style="font-size: 0.8em; animation: pulse 2s infinite;">'
-                '✓ Активен</span>'
+                '{}</span>',
+                '✓ Активен'
             )
         return format_html(
             '<span class="badge bg-danger text-white px-2 py-1 rounded-pill" '
-            'style="font-size: 0.8em;">✗ Неактивен</span>'
+            'style="font-size: 0.8em;">{}</span>',
+            '✗ Неактивен'
         )
     
     @display(description=_('Создано'), ordering='created_at')
