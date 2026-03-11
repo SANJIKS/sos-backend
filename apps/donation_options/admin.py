@@ -12,6 +12,7 @@ from .models import DonationOption
 @admin.register(DonationOption)
 class DonationOptionAdmin(ModelAdmin):
     list_display = ['image_preview', 'title', 'option_type_display', 'status_display', 'is_active', 'is_featured', 'order', 'created_at']
+    list_display_links = ['image_preview', 'title']
     list_filter = [
         ('option_type', ChoicesDropdownFilter),
         ('status', ChoicesDropdownFilter),
