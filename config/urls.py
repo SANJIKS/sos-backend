@@ -56,6 +56,7 @@ urlpatterns = [
     path('api/v1/feedback/', include('apps.feedback.urls')),
     path('api/v1/qrcode/', include('apps.qrcode.urls')),
     path('api/v1/common/', include('apps.common.urls')),
+    path('api/v1/sos-friends/friends/', include('apps.friendsos.urls')),
 
     
     path('health/', health_check, name='health_check'),

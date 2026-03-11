@@ -95,6 +95,7 @@ INSTALLED_APPS = [
     'apps.digital_campaigns',
     'apps.feedback',
     'apps.qrcode',
+    'apps.friendsos',
 ]
 
 MIDDLEWARE = [

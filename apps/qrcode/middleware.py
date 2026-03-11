@@ -64,7 +64,8 @@ class SecurityMiddleware(MiddlewareMixin):
             '/api/v1/donation-options/',
             '/api/v1/common/',
             '/api/v1/qrcode/',
-            '/api/v1/banking-requisites/'
+            '/api/v1/banking-requisites/',
+            'api/v1/sos-friends/friends/',
         ]
         
         if any(request.path.startswith(path) for path in exempt_paths):
