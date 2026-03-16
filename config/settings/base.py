@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     'apps.feedback',
     'apps.qrcode',
     'apps.friendsos',
+    'apps.donation_form_content'
 ]
 
 MIDDLEWARE = [
