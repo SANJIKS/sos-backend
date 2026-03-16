@@ -9,14 +9,9 @@ from .serializers import SuccessStorySerializer, SuccessStoryListSerializer
     retrieve=extend_schema(tags=['success-stories']),
 )
 class SuccessStoryViewSet(BaseContentViewSet):
-    """
-    ViewSet для историй успеха (только чтение)
-    """
     queryset = SuccessStory.objects.all()
     serializer_class = SuccessStorySerializer
     list_serializer_class = SuccessStoryListSerializer
     filterset_fields = ['is_featured', 'story_type']
     search_fields = ['title', 'quote_text', 'author_name', 'author_position']
     lookup_field = 'uuid'
-
-

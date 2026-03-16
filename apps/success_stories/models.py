@@ -4,9 +4,6 @@ from apps.common.mixins import BaseContentModel
 
 
 class SuccessStory(BaseContentModel):
-    """
-    Модель для историй успеха и цитат
-    """
     class StoryType(models.TextChoices):
         SUCCESS = 'success', _('Успех')
         FAMILY = 'family', _('Семья')
@@ -18,23 +15,12 @@ class SuccessStory(BaseContentModel):
     quote_text = models.TextField(verbose_name=_('Текст цитаты'))
     author_name = models.CharField(max_length=100, verbose_name=_('Имя автора'))
     author_position = models.CharField(max_length=200, verbose_name=_('Должность автора'))
-    author_image = models.ImageField(
-        upload_to='success_stories/', 
-        blank=True, 
-        null=True, 
-        verbose_name=_('Фото автора')
-    )
-    
-    # Тип истории для фильтрации
-    story_type = models.CharField(
-        max_length=20,
-        choices=StoryType.choices,
-        default=StoryType.SUCCESS,
-        verbose_name=_('Тип истории')
-    )
-    
-    # Дополнительная информация
+    author_image = models.ImageField(upload_to='success_stories/', blank=True, null=True, verbose_name=_('Фото автора'))
+    story_type = models.CharField(max_length=20, choices=StoryType.choices, default=StoryType.SUCCESS, verbose_name=_('Тип истории'))
     description = models.TextField(blank=True, verbose_name=_('Описание'))
+    full_story = models.TextField(blank=True, verbose_name=_('Полная история'))
+    video_url = models.URLField(blank=True, null=True, verbose_name=_('Ссылка на видео'))
+    banner_image = models.ImageField(upload_to='success_stories/banners/', blank=True, null=True, verbose_name=_('Баннер'))
 
     class Meta:
         verbose_name = _('История успеха')
@@ -43,5 +29,3 @@ class SuccessStory(BaseContentModel):
 
     def __str__(self):
         return f"{self.title} - {self.author_name}"
-
-
